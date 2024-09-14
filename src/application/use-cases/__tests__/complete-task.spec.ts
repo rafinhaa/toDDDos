@@ -3,23 +3,24 @@ import { makeUser } from "@/__tests__/factories/make-user";
 import { makeTask} from "@/__tests__/factories/make-task";
 import { InMemoryTasksRepository } from "@/__tests__/repositories/in-memory-tasks-repository";
 import { NotFoundError } from "@/application/use-cases/errors/not-found-error";
-import { DeleteTaskUseCase } from "../delete-task";
+import { CompleteTaskUseCase } from "../complete-task";
 import { NotPermissionError } from "../errors/not-permission-error";
+import { UniqueEntityId } from "@/core/entities/unique-entity-id";
 
 
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let inMemoryTasksRepository: InMemoryTasksRepository;
 
-let sut: DeleteTaskUseCase;
+let sut: CompleteTaskUseCase;
 
-describe("Delete task use case", () => {
+describe("Complete task use case", () => {
   beforeEach(() => {
     inMemoryUsersRepository = new InMemoryUsersRepository();
     inMemoryTasksRepository = new InMemoryTasksRepository();
-    sut = new DeleteTaskUseCase(inMemoryTasksRepository, inMemoryUsersRepository);
+    sut = new CompleteTaskUseCase(inMemoryTasksRepository, inMemoryUsersRepository);
   });
 
-  it("should be to able to delete a task", async () => {
+  it("should be to able to complete a task", async () => {
     const newUser = makeUser();
     await inMemoryUsersRepository.create(newUser);
     const task = makeTask({ userId: newUser.id });
@@ -31,9 +32,18 @@ describe("Delete task use case", () => {
     });
 
     expect(result.isRight()).toBeTruthy();
+
+    if (result.isLeft()) throw result.value;
+
+    expect(result.value.task).toMatchObject({
+      title: task.title,
+      userId: task.userId,
+      status: 1,
+      id: expect.any(UniqueEntityId)
+    })
   });
 
-  it("should not be able to delete a task if user not exists", async () => {
+  it("should not be able to complete a task if user not exists", async () => {
 
     const result = await sut.execute({
       taskId: "any_id",
@@ -47,7 +57,7 @@ describe("Delete task use case", () => {
     });
   });
 
-  it("should not be able to delete a task if task not exists", async () => {
+  it("should not be able to complete a task if task not exists", async () => {
     const newUser = makeUser();
     await inMemoryUsersRepository.create(newUser);
 
@@ -63,7 +73,7 @@ describe("Delete task use case", () => {
     });
   });
 
-  it("should not be able to delete a task if user does not own this task", async () => {
+  it("should not be able to complete a task if user does not own this task", async () => {
     const owner = makeUser();
     await inMemoryUsersRepository.create(owner);
 

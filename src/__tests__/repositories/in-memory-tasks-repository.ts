@@ -23,9 +23,7 @@ export class InMemoryTasksRepository implements TasksRepository {
   }
 
   async completeTask(task: Task): Promise<void> {
-    this.items.map(item => item.id.toString() === task.id.toString() ? {
-      ...item,
-      status: TaskStatus.DONE
-    } : item)
+    const taskIndex = this.items.findIndex(item => item.id.toString() === task.id.toString());
+    this.items[taskIndex] = task
   }
 }
