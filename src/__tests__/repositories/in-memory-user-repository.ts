@@ -1,0 +1,14 @@
+import { User } from "@/domain/entities/user";
+import { UsersRepository } from "@/application/repositories/users-repository";
+
+export class InMemoryUsersRepository implements UsersRepository {
+  public items: User[] = [];
+
+  async create(user: User) {
+    this.items.push(user);
+  }
+
+  async findByEmail({ email }: Pick<User, "email">): Promise<User | null> {
+    return this.items.find(item => item.email === email) || null;
+  }
+}
