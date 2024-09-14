@@ -1,0 +1,19 @@
+# Logs
+logs
+*.log
+yarn-debug.log*
+yarn-error.log*
+
+# node file version
+.tool-versions
+.nvm
+
+# Dependency directories
+node_modules/
+
+# Dotenv file
+.env
+.env.test
+
+# Dist folder
+dist

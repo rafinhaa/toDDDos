@@ -1,0 +1,11 @@
+{
+  "name": "todddos",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Rafinhaa",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.5.5",
+    "typescript": "^5.6.2"
+  }
+}
