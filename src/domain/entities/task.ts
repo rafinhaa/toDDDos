@@ -19,7 +19,7 @@ export class Task extends Entity<TaskProps> {
   }
 
   get userId() {
-    return this.props.userId.toString();
+    return this.props.userId;
   }
 
   set title(title: string) {
@@ -30,7 +30,14 @@ export class Task extends Entity<TaskProps> {
     this.props.status = status;
   }
 
+  set userId(userId: UniqueEntityId) {
+    this.props.userId = userId;
+  }
+
   static create(props: TaskProps, id?: UniqueEntityId) {
-    return new Task(props, id);
+    const initialStatus = props.status || TaskStatus.PENDING;
+    const task = { ...props, status: initialStatus };
+
+    return new Task(task, id);
   }
 }
