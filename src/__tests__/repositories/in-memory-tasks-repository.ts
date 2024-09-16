@@ -1,7 +1,6 @@
 import { User } from "@/domain/entities/user";
 import { TasksRepository } from "@/application/repositories/tasks-repository";
 import { Task } from "@/domain/entities/task";
-import { TaskStatus } from "@/domain/value-objects/task-status";
 
 export class InMemoryTasksRepository implements TasksRepository {
   public items: Task[] = [];
@@ -10,8 +9,8 @@ export class InMemoryTasksRepository implements TasksRepository {
     this.items.push(task);
   }
 
-  async findManyByUserId(user: User ): Promise<Task[] | null> {
-    return this.items.filter(item => item.userId.toString() === user.id.toString()) || null
+  async findManyByUserId(user: User ): Promise<Task[]> {
+    return this.items.filter(item => item.userId.toString() === user.id.toString())
   }
 
   async findById({ id }: Pick<Task, "id">): Promise<Task | null> {
