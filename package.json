@@ -6,11 +6,21 @@
   "license": "MIT",
   "scripts": {
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint --fix .",
+    "prettier": "npx prettier ./src",
+    "prettier:fix": "npx prettier --write ./src"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.0.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/node": "^22.5.5",
+    "eslint": "8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "prettier": "^3.3.3",
     "typescript": "^5.6.2",
     "vite-tsconfig-paths": "^5.0.1",
     "vitest": "^2.1.1"
