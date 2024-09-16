@@ -1,7 +1,7 @@
 {
   "name": "todddos",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/infra/http/server.ts",
   "author": "Rafinhaa",
   "license": "MIT",
   "scripts": {
@@ -10,7 +10,12 @@
     "lint": "npx eslint .",
     "lint:fix": "npx eslint --fix .",
     "prettier": "npx prettier ./src",
-    "prettier:fix": "npx prettier --write ./src"
+    "prettier:fix": "npx prettier --write ./src",
+    "dev": "tsx watch src/infra/http/server.ts"
+  },
+  "dependencies": {
+    "fastify": "^4.28.1",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.0.0",
@@ -21,6 +26,7 @@
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-unused-imports": "^4.1.4",
     "prettier": "^3.3.3",
+    "tsx": "^4.19.1",
     "typescript": "^5.6.2",
     "vite-tsconfig-paths": "^5.0.1",
     "vitest": "^2.1.1"
