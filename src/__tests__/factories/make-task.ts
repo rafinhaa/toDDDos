@@ -1,7 +1,8 @@
-import { UniqueEntityId} from "@/core/entities/unique-entity-id";
-import { Task } from "@/domain/entities/task";
-import { TaskStatus } from "@/domain/value-objects/task-status";
-import { faker } from "@faker-js/faker";
+import { faker } from "@faker-js/faker"
+
+import { UniqueEntityId } from "@/core/entities/unique-entity-id"
+import { Task } from "@/domain/entities/task"
+import { TaskStatus } from "@/domain/value-objects/task-status"
 
 export const makeTask = (override?: Partial<Task>): Task => {
   return Task.create({
@@ -10,5 +11,5 @@ export const makeTask = (override?: Partial<Task>): Task => {
     userId: new UniqueEntityId(),
     status: TaskStatus.PENDING,
     ...override,
-  });
-};
+  })
+}
