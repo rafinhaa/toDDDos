@@ -4,6 +4,7 @@ import { UniqueEntityId } from "@/core/entities/unique-entity-id"
 export type UserProps = {
   email: string
   password: string
+  createdAt?: Date
 }
 
 export class User extends Entity<UserProps> {
@@ -15,12 +16,20 @@ export class User extends Entity<UserProps> {
     return this.props.password
   }
 
+  get createdAt() {
+    return this.props.createdAt
+  }
+
   setEmail(email: string) {
     this.props.email = email
   }
 
   setPassword(password: string) {
     this.props.password = password
+  }
+
+  setCreatedAt(createdAt: Date) {
+    this.props.createdAt = createdAt
   }
 
   static create(props: UserProps, id?: UniqueEntityId) {
