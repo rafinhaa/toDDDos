@@ -1,5 +1,5 @@
-import { BcryptGenerate } from "./bcrypt-generate"
+import { BcryptGenerate } from "@/infra/encryption/bcrypt-generate"
 
-const hashGenerator = BcryptGenerate
+const HashGenerator = BcryptGenerate
 
-export { hashGenerator }
+export { HashGenerator }

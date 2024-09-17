@@ -1,8 +1,8 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import z from "zod"
 
-import { DrizzleUsersRepository } from "@/infra/database/drizzle/repositories/drizzle-users-repository"
-import { hashGenerator } from "@/infra/encryption"
+import { DatabaseUsersRepository } from "@/infra/database"
+import { HashGenerator } from "@/infra/encryption"
 import { userRegisterController } from "@/infra/http/controllers/user"
 
 const bodySchema = z
@@ -35,8 +35,8 @@ export const users: FastifyPluginAsyncZod = async (app) => {
       const { email, password } = req.body
 
       const result = await userRegisterController({
-        usersRepository: new DrizzleUsersRepository(),
-        hashGenerator: new hashGenerator(),
+        usersRepository: new DatabaseUsersRepository(),
+        hashGenerator: new HashGenerator(),
         email,
         password,
       })
