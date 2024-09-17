@@ -2,12 +2,11 @@ import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import z from "zod"
 
 import { CreateTaskUseCase } from "@/application/use-cases/create-task"
-import { CreateUserUseCase } from "@/application/use-cases/create-users"
+import { FetchTasksUseCase } from "@/application/use-cases/fetch-tasks"
 import {
   DatabaseTasksRepository,
   DatabaseUsersRepository,
 } from "@/infra/database"
-import { HashGenerator } from "@/infra/encryption"
 
 import { TaskPresenter } from "../presenters/task-presenter"
 
@@ -42,6 +41,33 @@ export const users: FastifyPluginAsyncZod = async (app) => {
 
       return rep.status(201).send({
         task,
+      })
+    },
+  )
+
+  app.get(
+    "/:userId/tasks",
+    {
+      schema: {
+        params: z.object({ userId: z.string().uuid() }),
+      },
+    },
+    async (req, rep) => {
+      const { userId } = req.params
+
+      const result = await new FetchTasksUseCase(
+        new DatabaseTasksRepository(),
+        new DatabaseUsersRepository(),
+      ).execute({
+        userId,
+      })
+
+      if (result.isLeft()) throw result.value
+
+      const tasks = result.value.tasks.map(TaskPresenter.toHTTP)
+
+      return rep.status(201).send({
+        tasks,
       })
     },
   )
