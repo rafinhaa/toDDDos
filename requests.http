@@ -1,0 +1,49 @@
+@baseUrl = http://localhost:3333
+@userId = 096377eb-634f-4686-ad66-380e1a142f32
+@authToken = Bearer {{userSignIn.response.body.$.token}}
+
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+    "email": "sucesso@aa1sas.com",
+    "password": "12345611",
+    "confirmPassword": "12345611"
+}
+
+###
+
+# @name userSignIn
+POST {{baseUrl}}/auth/sign-in
+Content-Type: application/json
+
+{
+    "email": "sucesso@aa1sas.com",
+    "password": "12345611"
+}
+
+###
+
+# @name createTask
+POST {{baseUrl}}/users/{{userId}}/tasks
+Content-Type: application/json
+Cookie: 
+
+{
+    "title": "Tomar café"
+}
+
+###
+
+GET {{baseUrl}}/users/{{userId}}/tasks
+Content-Type: application/json
+Authorization: {{authToken}}
+
+###
+
+@taskId = {{createTask.response.body.$.task.id}}
+
+PATCH {{baseUrl}}/users/{{userId}}/tasks/{{taskId}}/complete
+Authorization: {{authToken}}
+
+###
