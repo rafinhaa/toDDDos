@@ -17,6 +17,8 @@ const createTaskSchema = z.object({
 })
 
 export const users: FastifyPluginAsyncZod = async (app) => {
+  app.addHook("onRequest", (request) => request.jwtVerify())
+
   app.post(
     "/:userId/tasks",
     {
