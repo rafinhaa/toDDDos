@@ -1,3 +1,4 @@
+import { FakerHashGenerate } from "@/__tests__/encryption/faker-hash-generate"
 import { makeUser } from "@/__tests__/factories/make-user"
 import { InMemoryUsersRepository } from "@/__tests__/repositories/in-memory-user-repository"
 import { CreateUserUseCase } from "@/application/use-cases/create-users"
@@ -5,12 +6,14 @@ import { ConflictError } from "@/application/use-cases/errors/conflict-error"
 import { UniqueEntityId } from "@/core/entities/unique-entity-id"
 
 let inMemoryUsersRepository: InMemoryUsersRepository
+let fakerHashGenerate: FakerHashGenerate
 let sut: CreateUserUseCase
 
 describe("Create user use case", () => {
   beforeEach(() => {
     inMemoryUsersRepository = new InMemoryUsersRepository()
-    sut = new CreateUserUseCase(inMemoryUsersRepository)
+    fakerHashGenerate = new FakerHashGenerate()
+    sut = new CreateUserUseCase(inMemoryUsersRepository, fakerHashGenerate)
   })
 
   it("should be to able to create a new user", async () => {
@@ -22,7 +25,7 @@ describe("Create user use case", () => {
 
     expect(result.value.user).toMatchObject({
       email: newUser.email,
-      password: newUser.password,
+      password: expect.any(String),
       id: expect.any(UniqueEntityId),
     })
   })
