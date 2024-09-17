@@ -9,6 +9,7 @@ import { ZodError } from "zod"
 import { ConflictError } from "@/application/use-cases/errors/conflict-error"
 import { NotFoundError } from "@/application/use-cases/errors/not-found-error"
 import { NotPermissionError } from "@/application/use-cases/errors/not-permission-error"
+import { env } from "@/env"
 import { auth } from "@/infra/http/routes/auth"
 import { users } from "@/infra/http/routes/user"
 
@@ -18,6 +19,10 @@ export const app = fastify({
 
 app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
+
+app.register(require("@fastify/jwt"), {
+  secret: env.JWT_SECRET,
+})
 
 app.register(users, { prefix: "/users" })
 app.register(auth, { prefix: "/auth" })
@@ -46,6 +51,14 @@ app.setErrorHandler((error, _, reply) => {
   if (error instanceof NotPermissionError) {
     return reply.status(403).send({
       statusCode: error.statusCode,
+      message: error.message,
+    })
+  }
+
+  if (env.NODE_ENV === "development") {
+    return reply.status(500).send({
+      statusCode: 500,
+      error: error.name,
       message: error.message,
     })
   }

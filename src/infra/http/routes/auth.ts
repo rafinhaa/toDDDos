@@ -33,7 +33,9 @@ export const auth: FastifyPluginAsyncZod = async (app) => {
 
       if (result.isLeft()) throw result.value
 
-      return rep.status(200)
+      const token = app.jwt.sign({ id: result.value.user.id.toString() })
+
+      return rep.status(200).send({ token })
     },
   )
 }
