@@ -24,5 +24,5 @@ export const tasks = pgTable("tasks", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-  completedAt: timestamp("completed_at", { withTimezone: true }).notNull(),
+  completedAt: timestamp("completed_at", { withTimezone: true }),
 })

@@ -8,6 +8,13 @@
       "when": 1726516721484,
       "tag": "0000_funny_darwin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1726581513002,
+      "tag": "0001_handy_supreme_intelligence",
+      "breakpoints": true
     }
   ]
 }
