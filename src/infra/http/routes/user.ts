@@ -1,9 +1,9 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import z from "zod"
 
+import { CreateUserUseCase } from "@/application/use-cases/create-users"
 import { DatabaseUsersRepository } from "@/infra/database"
 import { HashGenerator } from "@/infra/encryption"
-import { userRegisterController } from "@/infra/http/controllers/user"
 
 const bodySchema = z
   .object({
@@ -34,9 +34,10 @@ export const users: FastifyPluginAsyncZod = async (app) => {
     async (req, rep) => {
       const { email, password } = req.body
 
-      const result = await userRegisterController({
-        usersRepository: new DatabaseUsersRepository(),
-        hashGenerator: new HashGenerator(),
+      const result = await new CreateUserUseCase(
+        new DatabaseUsersRepository(),
+        new HashGenerator(),
+      ).execute({
         email,
         password,
       })
