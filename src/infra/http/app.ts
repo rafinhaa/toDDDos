@@ -9,6 +9,7 @@ import { ZodError } from "zod"
 import { ConflictError } from "@/application/use-cases/errors/conflict-error"
 import { NotFoundError } from "@/application/use-cases/errors/not-found-error"
 import { NotPermissionError } from "@/application/use-cases/errors/not-permission-error"
+import { auth } from "@/infra/http/routes/auth"
 import { users } from "@/infra/http/routes/user"
 
 export const app = fastify({
@@ -19,6 +20,7 @@ app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
 
 app.register(users, { prefix: "/users" })
+app.register(auth, { prefix: "/auth" })
 
 app.setErrorHandler((error, _, reply) => {
   if (error instanceof ZodError)
