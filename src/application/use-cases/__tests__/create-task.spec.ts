@@ -28,7 +28,10 @@ describe("Create task use case", () => {
 
     const newTask = makeTask({ userId: newUser.id })
 
-    const result = await sut.execute(newTask)
+    const result = await sut.execute({
+      title: newTask.title,
+      userId: newUser.id.toString(),
+    })
 
     if (result.isLeft()) throw result.value
 
@@ -37,13 +40,18 @@ describe("Create task use case", () => {
       userId: newTask.userId,
       status: newTask.status,
       id: expect.any(UniqueEntityId),
+      createdAt: expect.any(Date),
+      completedAt: null,
     })
   })
 
   it("should not be able to create a new task if user not exists", async () => {
     const newTask = makeTask()
 
-    const result = await sut.execute(newTask)
+    const result = await sut.execute({
+      title: newTask.title,
+      userId: "wrong-user-id",
+    })
 
     expect(result.isLeft()).toBe(true)
     expect(result.value).toBeInstanceOf(NotFoundError)

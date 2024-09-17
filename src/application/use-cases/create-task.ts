@@ -6,7 +6,10 @@ import { Task, TaskProps } from "@/domain/entities/task"
 import { TasksRepository } from "../repositories/tasks-repository"
 import { NotFoundError } from "./errors/not-found-error"
 
-interface CreateTaskUseCaseRequest extends TaskProps {}
+interface CreateTaskUseCaseRequest {
+  title: string
+  userId: string
+}
 
 type CreateTaskUseCaseResponse = Either<
   NotFoundError,
@@ -25,13 +28,17 @@ export class CreateTaskUseCase {
     title,
     userId,
   }: CreateTaskUseCaseRequest): Promise<CreateTaskUseCaseResponse> {
-    const user = await this.userRepository.findById({ id: userId })
+    const entityUserId = new UniqueEntityId(userId)
+
+    const user = await this.userRepository.findById({
+      id: entityUserId,
+    })
 
     if (!user) return left(new NotFoundError("User not found"))
 
     const task = Task.create({
       title,
-      userId,
+      userId: entityUserId,
     })
 
     await this.tasksRepository.create(task)

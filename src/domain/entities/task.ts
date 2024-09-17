@@ -6,6 +6,8 @@ export type TaskProps = {
   title: string
   userId: UniqueEntityId
   status?: TaskStatus
+  createdAt?: Date
+  completedAt?: Date | null
 }
 
 export class Task extends Entity<TaskProps> {
@@ -21,6 +23,14 @@ export class Task extends Entity<TaskProps> {
     return this.props.userId
   }
 
+  get createdAt(): Date | null {
+    return this.props.createdAt || null
+  }
+
+  get completedAt(): Date | null {
+    return this.props.completedAt || null
+  }
+
   set title(title: string) {
     this.props.title = title
   }
@@ -33,9 +43,17 @@ export class Task extends Entity<TaskProps> {
     this.props.userId = userId
   }
 
+  set createdAt(createdAt: Date) {
+    this.props.createdAt = createdAt
+  }
+
+  set completedAt(completedAt: Date | null) {
+    this.props.completedAt = completedAt
+  }
+
   static create(props: TaskProps, id?: UniqueEntityId) {
     const initialStatus = props.status || TaskStatus.PENDING
-    const task = { ...props, status: initialStatus }
+    const task = { ...props, status: initialStatus, createdAt: new Date() }
 
     return new Task(task, id)
   }
