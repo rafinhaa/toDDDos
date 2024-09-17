@@ -1,7 +1,9 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import z from "zod"
 
+import { CompleteTaskUseCase } from "@/application/use-cases/complete-task"
 import { CreateTaskUseCase } from "@/application/use-cases/create-task"
+import { DeleteTaskUseCase } from "@/application/use-cases/delete-task"
 import { FetchTasksUseCase } from "@/application/use-cases/fetch-tasks"
 import {
   DatabaseTasksRepository,
@@ -68,6 +70,64 @@ export const users: FastifyPluginAsyncZod = async (app) => {
 
       return rep.status(201).send({
         tasks,
+      })
+    },
+  )
+
+  app.delete(
+    "/:userId/tasks/:taskId",
+    {
+      schema: {
+        params: z.object({
+          userId: z.string().uuid(),
+          taskId: z.string().uuid(),
+        }),
+      },
+    },
+    async (req, rep) => {
+      const { userId, taskId } = req.params
+
+      const result = await new DeleteTaskUseCase(
+        new DatabaseTasksRepository(),
+        new DatabaseUsersRepository(),
+      ).execute({
+        userId,
+        taskId,
+      })
+
+      if (result.isLeft()) throw result.value
+
+      return rep.status(200)
+    },
+  )
+
+  app.patch(
+    "/:userId/tasks/:taskId/complete",
+    {
+      schema: {
+        params: z.object({
+          userId: z.string().uuid(),
+          taskId: z.string().uuid(),
+        }),
+      },
+    },
+    async (req, rep) => {
+      const { userId, taskId } = req.params
+
+      const result = await new CompleteTaskUseCase(
+        new DatabaseTasksRepository(),
+        new DatabaseUsersRepository(),
+      ).execute({
+        userId,
+        taskId,
+      })
+
+      if (result.isLeft()) throw result.value
+
+      const task = TaskPresenter.toHTTP(result.value.task)
+
+      return rep.status(200).send({
+        task,
       })
     },
   )

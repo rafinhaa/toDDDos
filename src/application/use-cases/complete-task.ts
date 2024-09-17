@@ -44,6 +44,7 @@ export class CompleteTaskUseCase {
       return left(new NotPermissionError("User does not own this task"))
 
     task.status = TaskStatus.DONE
+    task.completedAt = new Date()
 
     await this.tasksRepository.completeTask(task)
 
