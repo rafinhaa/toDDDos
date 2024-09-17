@@ -1,50 +1,48 @@
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod"
 import z from "zod"
 
+import { CreateTaskUseCase } from "@/application/use-cases/create-task"
 import { CreateUserUseCase } from "@/application/use-cases/create-users"
-import { DatabaseUsersRepository } from "@/infra/database"
+import {
+  DatabaseTasksRepository,
+  DatabaseUsersRepository,
+} from "@/infra/database"
 import { HashGenerator } from "@/infra/encryption"
 
-const bodySchema = z
-  .object({
-    email: z.string().email(),
-    password: z.string().min(6),
-    confirmPassword: z.string().min(6),
-  })
-  .superRefine(({ confirmPassword, password }, ctx) => {
-    if (confirmPassword !== password) {
-      ctx.addIssue({
-        code: "custom",
-        message: "The passwords did not match",
-        path: ["confirmPassword"],
-      })
-    }
-  })
+import { TaskPresenter } from "../presenters/task-presenter"
 
-const schema = {
-  body: bodySchema,
-}
+const createTaskSchema = z.object({
+  title: z.string(),
+})
 
 export const users: FastifyPluginAsyncZod = async (app) => {
   app.post(
-    "/register",
+    "/:userId/tasks",
     {
-      schema,
+      schema: {
+        body: createTaskSchema,
+        params: z.object({ userId: z.string().uuid() }),
+      },
     },
     async (req, rep) => {
-      const { email, password } = req.body
+      const { title } = req.body
+      const { userId } = req.params
 
-      const result = await new CreateUserUseCase(
+      const result = await new CreateTaskUseCase(
+        new DatabaseTasksRepository(),
         new DatabaseUsersRepository(),
-        new HashGenerator(),
       ).execute({
-        email,
-        password,
+        title,
+        userId,
       })
 
       if (result.isLeft()) throw result.value
 
-      return rep.status(201)
+      const task = TaskPresenter.toHTTP(result.value.task)
+
+      return rep.status(201).send({
+        task,
+      })
     },
   )
 }
